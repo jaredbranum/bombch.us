@@ -5,7 +5,7 @@ require 'tokyocabinet'
 require 'json'
 require 'lib/base64url.rb'
 
-URL_PREFIX = 'http://bombch.us/'
+URL_PREFIX = 'http://localhost:4567/' #'http://bombch.us/'
 VALID_URL = /^[^:]+:\/\//
 
 store ||= TokyoCabinet::HDB::new
@@ -13,10 +13,10 @@ store.open("db/url_data.tch", TokyoCabinet::HDB::OWRITER | TokyoCabinet::HDB::OC
 
 # basic pages
 get '/' do
-  'home'
+  erb :index
 end
 
-get '/404' do
+get '/404/?' do
   'page not found'
 end
 
@@ -30,13 +30,18 @@ get '/:urlkey' do
 end
 
 # API
-post '/api/:url' do 
+post '/api/shorten/new/?' do
   # TODO: tokyo dystopia to prevent duplicate URLs with different keys
-  full_url = params[:url]
-  if full_url =~ VALID_URL
+  
+  long_url = params['long_url']
+  if long_url =~ VALID_URL
     count = store.addint(':atomic_count:', 1)
     new_key = Base64Url.encode(count)
-    store.put(new_key, full_url)
-    {:short_url => "#{URL_PREFIX}#{new_key}", :full_url => "#{full_url}" }.to_json
+    store.put(new_key, long_url)
+    
+    content_type :json
+    {:short_url => "#{URL_PREFIX}#{new_key}", :long_url => "#{long_url}" }.to_json
+  else
+    'Error: Invalid long_url value.'
   end
 end
