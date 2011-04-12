@@ -21,8 +21,8 @@ var Bombchus = {
   },
   generateShortUrl: function(){
     var url_to_shorten = $('#url_textbox').val();
-    if ( !url_to_shorten.test(/^[^:]+:\/\//) ){
-      if ( url_to_shorten.test(/^www\./) ){
+    if ( !(/^[\w]+:\/\//).test(url_to_shorten) ){
+      if ( (/^www\./).test(url_to_shorten) ){
         url_to_shorten = 'http://' + url_to_shorten;
       } else {
         url_to_shorten = 'http://www.' + url_to_shorten;
@@ -31,13 +31,13 @@ var Bombchus = {
     }
     $.ajax({
       type: 'POST',
-      url: '/api/shorten/new/',
+      url: '/shorten/new/',
       data:
       { 
-        "long_url": url_to_shorten
+        "url": url_to_shorten
       },
       success: function(res){
-        Bombchus.displayShortUrl(res.short_url);
+        Bombchus.displayShortUrl(res.url);
       },
       error: function(res){
         $('body').append(res.responseText);
