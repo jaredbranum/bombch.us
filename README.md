@@ -3,7 +3,7 @@
 ### About
 bombch.us is my personal URL shortener. It supports shortening URLs as well as expanding shortened URLs to their original state.
 
-## Technologies used
+### Technologies used
 * [Ruby](http://www.ruby-lang.org/)
 * [Sinatra](http://www.sinatrarb.com/)
 * [Tokyo Cabinet](http://fallabs.com/tokyocabinet/)
