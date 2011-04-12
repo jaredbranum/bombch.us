@@ -1,15 +1,11 @@
 # bombch.us
 
 require 'sinatra'
-require 'tokyocabinet'
 require 'json'
-require 'lib/base64url.rb'
+require File.expand_path(File.dirname(__FILE__) + '/bombchus/db')
 
 URL_PREFIX = 'http://localhost:4567/' #'http://bombch.us/'
-VALID_URL = /^[^:]+:\/\//
-
-store ||= TokyoCabinet::HDB::new
-store.open("db/url_data.tch", TokyoCabinet::HDB::OWRITER | TokyoCabinet::HDB::OCREAT)
+db = Bombchus::Db.new(File.expand_path(File.dirname(__FILE__) + "/db/url_data.tch"))
 
 # basic pages
 get '/' do
@@ -17,31 +13,32 @@ get '/' do
 end
 
 get '/404/?' do
-  'page not found'
+  erb :'404'
+end
+
+# API routes
+post '/shorten/new/?' do
+  url = params['url']
+  begin
+    key = db.shorten(url)
+    content_type :json
+    {:url => "#{URL_PREFIX}#{key}", :original_url => "#{url}" }.to_json
+  rescue Bombchus::InvalidURLException => e
+    status 500
+    body e.message
+  end
+end
+
+get '/expand/:key' do
+  key = params[:key]
+  url = db.expand(key)
+  content_type :json
+  {:url => "#{URL_PREFIX}#{key}", :original_url => "#{url}" }.to_json
 end
 
 # redirect route
 get '/:urlkey' do
-  key = params[:urlkey]
-  full_url = store.get(key)
-  redirect '/404' if full_url.nil?
-  redirect full_url if full_url =~ VALID_URL
-  redirect '/404'
-end
-
-# API
-post '/api/shorten/new/?' do
-  # TODO: tokyo dystopia to prevent duplicate URLs with different keys
-  
-  long_url = params['long_url']
-  if long_url =~ VALID_URL
-    count = store.addint(':atomic_count:', 1)
-    new_key = Base64Url.encode(count)
-    store.put(new_key, long_url)
-    
-    content_type :json
-    {:short_url => "#{URL_PREFIX}#{new_key}", :long_url => "#{long_url}" }.to_json
-  else
-    'Error: Invalid long_url value.'
-  end
+  url = db.expand(params[:urlkey])
+  redirect '/404' if url.nil? || !(url =~ Bombchus::VALID_URL)
+  redirect url
 end
