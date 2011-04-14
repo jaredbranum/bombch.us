@@ -4,7 +4,7 @@ require 'sinatra'
 require 'json'
 require File.expand_path(File.dirname(__FILE__) + '/bombchus/db')
 
-URL_PREFIX = 'http://localhost:4567/' #'http://bombch.us/'
+URL_PREFIX = 'http://bombch.us/'
 db = Bombchus::Db.new(File.expand_path(File.dirname(__FILE__) + "/db/url_data.tch"))
 
 # basic pages
