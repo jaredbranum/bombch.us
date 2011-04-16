@@ -11,12 +11,19 @@ var Bombchus = {
     var txtbox = $('#url_textbox');
     btn.click(Bombchus.generateShortUrl);
     txtbox.keydown(function(e){
-      if ( e.keyCode == 13 ){
+      if ( e.keyCode == 13 ){ // Enter key
         Bombchus.generateShortUrl();
+      }
+    });
+    txtbox.keyup(function(e){
+      if ( txtbox.val() != "http://" ){
+        txtbox.css('color', '#000');
+        $(this).unbind(e);
       }
     });
     txtbox.keypress(function(e){
       txtbox.css('color', '#000');
+      $(this).unbind(e);
     });
   },
   generateShortUrl: function(){
@@ -32,10 +39,7 @@ var Bombchus = {
     $.ajax({
       type: 'POST',
       url: '/shorten/new/',
-      data:
-      { 
-        "url": url_to_shorten
-      },
+      data: { "url": url_to_shorten },
       success: function(res){
         Bombchus.displayShortUrl(res.url);
       },
