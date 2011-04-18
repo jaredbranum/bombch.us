@@ -12,7 +12,7 @@ get '/' do
   erb :index
 end
 
-get '/404/?' do
+not_found do
   erb :'404'
 end
 
@@ -39,6 +39,9 @@ end
 # redirect route
 get '/:urlkey' do
   url = db.expand(params[:urlkey])
-  redirect '/404' if url.nil? || !(url =~ Bombchus::VALID_URL)
-  redirect url
+  if url.nil? || !(url =~ Bombchus::VALID_URL)
+    status 404
+  else
+    redirect url
+  end
 end
