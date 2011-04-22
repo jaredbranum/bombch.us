@@ -15,15 +15,9 @@ var Bombchus = {
         Bombchus.generateShortUrl();
       }
     });
-    txtbox.keyup(function(e){
-      if ( txtbox.val() != "http://" ){
-        txtbox.css('color', '#000');
-        $(this).unbind(e);
-      }
-    });
-    txtbox.keypress(function(e){
+    txtbox.one('focus', function(){
+      txtbox.val("");
       txtbox.css('color', '#000');
-      $(this).unbind(e);
     });
   },
   generateShortUrl: function(){
