@@ -2,7 +2,7 @@ require 'tokyocabinet'
 require  File.expand_path(File.dirname(__FILE__) + '/../lib/base64url')
 
 class Bombchus
-  VALID_URL = /^\w+:\/\//
+  VALID_URL = /\w:\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
   class InvalidURLException < Exception
     def message
       "The URL you have provided is not valid. Please try another URL."

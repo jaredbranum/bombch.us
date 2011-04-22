@@ -6,6 +6,8 @@ var Bombchus = {
   init: function(){
     Bombchus.bindEventHandlers();
   },
+  enabled: true,
+  validUrl: /[a-zA-Z]+:\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/,
   bindEventHandlers: function(event){
     var btn = $('#shorten_button');
     var txtbox = $('#url_textbox');
@@ -21,15 +23,17 @@ var Bombchus = {
     });
   },
   generateShortUrl: function(){
-    var url_to_shorten = $('#url_textbox').val();
-    if ( !(/^[\w]+:\/\//).test(url_to_shorten) ){
-      if ( (/^www\./).test(url_to_shorten) ){
-        url_to_shorten = 'http://' + url_to_shorten;
-      } else {
-        url_to_shorten = 'http://www.' + url_to_shorten;
-      }
-      $('#url_textbox').val(url_to_shorten);
+    if ( !Bombchus.enabled ){
+      return;
     }
+    var url_to_shorten = $('#url_textbox').val();
+    if ( !Bombchus.validUrl.test(url_to_shorten) ){
+      url_to_shorten = 'http://' + url_to_shorten;
+      if ( !Bombchus.validUrl.test(url_to_shorten) ){
+        return;
+      }
+    }
+    $('#url_textbox').val(url_to_shorten);
     $.ajax({
       type: 'POST',
       url: '/shorten/new/',
@@ -41,6 +45,11 @@ var Bombchus = {
         $('body').append(res.responseText);
       },
       dataType: 'json'
+    });
+    Bombchus.enabled = false;
+    $('#shorten_button').css({
+      backgroundColor: '#81838E',
+      color: '#CCC394'
     });
   },
   displayShortUrl: function(sh_url){
