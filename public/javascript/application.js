@@ -51,13 +51,13 @@ var Bombchus = {
     });
   },
   displayShortUrl: function(shortUrl){
-    var out = $('#output');
-    out.html($("<a></a>").attr('href', shortUrl).text(shortUrl));
-    out.fadeIn('fast');
+    $('#output')
+      .html($("<a></a>").attr('href', shortUrl).text(shortUrl))
+      .fadeIn('fast');
   },
   displayErrorMessage: function(msg){
-    var out = $('#output');
-    out.html($("<span></span>").addClass("error").text(msg));
-    out.fadeIn('fast');
+    $('#output')
+      .html($("<span></span>").addClass("error").text(msg))
+      .fadeIn('fast');
   }
 };

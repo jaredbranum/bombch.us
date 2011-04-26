@@ -2,6 +2,8 @@ require 'uri'
 
 class Bombchus
   
+  URL_PREFIX = 'http://bombch.us/'
+  
   class InvalidURLException < Exception
     def message
       "The URL you have provided is not valid. Please try another URL."

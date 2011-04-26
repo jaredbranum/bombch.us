@@ -6,7 +6,7 @@ bombch.us is my personal URL shortener. It supports shortening URLs as well as e
 ### Technologies used
 * [Ruby](http://www.ruby-lang.org/)
 * [Sinatra](http://www.sinatrarb.com/)
-* [Tokyo Cabinet](http://fallabs.com/tokyocabinet/)
+* [MongoDB](http://www.mongodb.org/)
 * [jQuery](http://jquery.com/)
 
 ### License

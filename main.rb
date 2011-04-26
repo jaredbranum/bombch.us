@@ -4,8 +4,7 @@ require 'sinatra'
 require 'json'
 require File.expand_path(File.dirname(__FILE__) + '/bombchus/db')
 
-URL_PREFIX = 'http://bombch.us/'
-db = Bombchus::Db.new(File.expand_path(File.dirname(__FILE__) + "/db/url_data.tch"))
+db = Bombchus::Db.new("bombchus")
 
 # basic pages
 get '/' do
@@ -18,11 +17,9 @@ end
 
 # API routes
 post '/shorten/new/?' do
-  url = params['url']
   begin
-    key = db.shorten(url)
     content_type :json
-    {:url => "#{URL_PREFIX}#{key}", :original_url => "#{url}" }.to_json
+    (db.shorten(params['url']) || {}).to_json
   rescue Bombchus::InvalidURLException => e
     status 500
     body e.message
@@ -30,18 +27,18 @@ post '/shorten/new/?' do
 end
 
 get '/expand/:key' do
-  key = params[:key]
-  url = db.expand(key)
   content_type :json
-  {:url => "#{URL_PREFIX}#{key}", :original_url => "#{url}" }.to_json
+  (db.expand(params[:key]) || {}).to_json
 end
 
 # redirect route
 get '/:urlkey' do
-  url = db.expand(params[:urlkey])
-  if Bombchus::valid_url?(url)
-    status 404
-  else
+  urldata = db.expand(params[:urlkey])
+  url = urldata['long_url'] if urldata
+  if url && Bombchus::valid_url?(url)
+    db.increment_click(urldata['key'])
     redirect url
+  else
+    status 404
   end
 end
