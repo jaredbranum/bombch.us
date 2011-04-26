@@ -39,7 +39,7 @@ end
 # redirect route
 get '/:urlkey' do
   url = db.expand(params[:urlkey])
-  if url.nil? || !(url =~ Bombchus::VALID_URL)
+  if Bombchus::valid_url?(url)
     status 404
   else
     redirect url

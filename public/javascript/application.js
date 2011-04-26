@@ -6,8 +6,8 @@ var Bombchus = {
   init: function(){
     Bombchus.bindEventHandlers();
   },
-  enabled: true,
-  validUrl: /[a-zA-Z]+:\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/,
+  enabled: false,
+  validUrl: /[a-zA-Z][-+.a-zA-Z\d]*:\/\//,
   bindEventHandlers: function(event){
     var btn = $('#shorten_button');
     var txtbox = $('#url_textbox');
@@ -18,43 +18,46 @@ var Bombchus = {
       }
     });
     txtbox.one('focus', function(){
-      txtbox.val("");
-      txtbox.css('color', '#000');
+      Bombchus.enabled = true;
+      txtbox.val("").css('color', '#000');
     });
   },
   generateShortUrl: function(){
     if ( !Bombchus.enabled ){
+      Bombchus.displayErrorMessage("Please enter a URL to shorten.");
       return;
     }
-    var url_to_shorten = $('#url_textbox').val();
-    if ( !Bombchus.validUrl.test(url_to_shorten) ){
-      url_to_shorten = 'http://' + url_to_shorten;
-      if ( !Bombchus.validUrl.test(url_to_shorten) ){
-        return;
-      }
+    var urlToShorten = $('#url_textbox').val();
+    if ( !Bombchus.validUrl.test(urlToShorten) ){
+      urlToShorten = "http://" + urlToShorten;
     }
-    $('#url_textbox').val(url_to_shorten);
+    $('#url_textbox').val(urlToShorten);
     $.ajax({
       type: 'POST',
       url: '/shorten/new/',
-      data: { "url": url_to_shorten },
+      data: { url : urlToShorten },
       success: function(res){
+        Bombchus.enabled = false;
         Bombchus.displayShortUrl(res.url);
       },
       error: function(res){
-        $('body').append(res.responseText);
+        Bombchus.displayErrorMessage(res.responseText);
       },
       dataType: 'json'
     });
-    Bombchus.enabled = false;
     $('#shorten_button').css({
       backgroundColor: '#81838E',
       color: '#CCC394'
     });
   },
-  displayShortUrl: function(sh_url){
+  displayShortUrl: function(shortUrl){
     var out = $('#output');
-    out.html('<a href="' + sh_url + '">' + sh_url + '</a>');
+    out.html($("<a></a>").attr('href', shortUrl).text(shortUrl));
+    out.fadeIn('fast');
+  },
+  displayErrorMessage: function(msg){
+    var out = $('#output');
+    out.html($("<span></span>").addClass("error").text(msg));
     out.fadeIn('fast');
   }
 };

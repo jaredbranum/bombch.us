@@ -79,3 +79,13 @@ body
   -moz-border-radius: 10px;
   border-radius: 10px;
 }
+
+#output a, #output a:visited
+{
+  color: blue;
+}
+
+.error
+{
+  color: red;
+}

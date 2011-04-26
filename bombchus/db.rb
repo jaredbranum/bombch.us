@@ -1,14 +1,8 @@
 require 'tokyocabinet'
+require  File.expand_path(File.dirname(__FILE__) + '/bombchus')
 require  File.expand_path(File.dirname(__FILE__) + '/../lib/base64url')
 
-class Bombchus
-  VALID_URL = /\w:\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
-  class InvalidURLException < Exception
-    def message
-      "The URL you have provided is not valid. Please try another URL."
-    end
-  end
-  
+class Bombchus  
   class Db
     
     def initialize(dbfile)
@@ -23,7 +17,7 @@ class Bombchus
     def shorten(url)
       # TODO: check to see if there is already an entry
       # (use tokyo dystopia?)
-      raise Bombchus::InvalidURLException unless url =~ Bombchus::VALID_URL
+      raise Bombchus::InvalidURLException unless Bombchus.valid_url?(url)
       
       count = @store.addint(':url_count:', 1)
       key = Base64Url.encode(count)
