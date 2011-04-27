@@ -14,7 +14,9 @@ var Bombchus = {
     btn.click(Bombchus.generateShortUrl);
     txtbox.keydown(function(e){
       if ( e.keyCode == 13 ){ // Enter key
+        Bombchus.enabled = true;
         Bombchus.generateShortUrl();
+        $(this).unbind(e);
       }
     });
     txtbox.one('focus', function(){
@@ -38,7 +40,7 @@ var Bombchus = {
       data: { url : urlToShorten },
       success: function(res){
         Bombchus.enabled = false;
-        Bombchus.displayShortUrl(res.url);
+        Bombchus.displayShortUrl(res.url, res.clicks);
       },
       error: function(res){
         Bombchus.displayErrorMessage(res.responseText);
@@ -50,10 +52,12 @@ var Bombchus = {
       color: '#CCC394'
     });
   },
-  displayShortUrl: function(shortUrl){
+  displayShortUrl: function(shortUrl,count){
     $('#output')
       .html($("<a></a>").attr('href', shortUrl).text(shortUrl))
-      .fadeIn('fast');
+      .append("this link has been clicked " 
+        + count + " time" + (count != 1 ? "s" : ""))
+      .fadeIn('fast');    
   },
   displayErrorMessage: function(msg){
     $('#output')
