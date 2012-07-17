@@ -46,10 +46,11 @@ class Bombchus
     
     def shorten(url)
       raise Bombchus::InvalidURLException unless Bombchus.valid_url?(url)
-      
       unless doc = @urls.find_one(:long_url => url)
-        count = increment_count
-        key = Base64Url.encode(count)
+        begin
+          count = increment_count
+          key = Base64Url.encode(count)
+        end while Bombchus.used_routes.include? key
         doc = {
           'key' => key,
           'long_url' => url,

@@ -23,5 +23,9 @@ class Bombchus
     end
     true
   end
+
+  def self.used_routes
+    [ 'expand', 'shorten' ]
+  end
   
 end
