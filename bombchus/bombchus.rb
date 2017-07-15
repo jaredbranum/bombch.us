@@ -1,4 +1,5 @@
 require 'uri'
+require  File.expand_path(File.dirname(__FILE__) + '/../lib/url_checker')
 
 class Bombchus
   
@@ -11,14 +12,8 @@ class Bombchus
   end
   
   def self.valid_url?(url)
-    begin
-      u = URI.parse(url)
-      if u.host.nil? || u.host.empty? || 
-         u.port.nil? || !u.port.is_a?(Integer) || 
-         u.path.nil?
-        raise Bombchus::InvalidURLException
-      end 
-    rescue URI::InvalidURIError => e
+    u = UrlChecker.new(url)
+    if u.invalid? || u.spam? || !u.resolves?
       raise Bombchus::InvalidURLException
     end
     true
