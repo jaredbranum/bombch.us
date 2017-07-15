@@ -61,6 +61,10 @@ class Bombchus
       doc.delete('_id')
       doc.merge('url' => "#{Bombchus::URL_PREFIX}#{doc['key']}")
     end
-    
+
+    def delete!(key)
+      @urls.remove(:key => key)
+    end
+
   end
 end
