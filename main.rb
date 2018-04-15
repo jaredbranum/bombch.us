@@ -35,10 +35,14 @@ end
 get '/:urlkey' do
   urldata = db.expand(params[:urlkey])
   url = urldata['long_url'] if urldata
-  if url && Bombchus::valid_url?(url)
-    db.increment_click(urldata['key'])
-    redirect url
-  else
+  begin
+    if url && Bombchus::valid_url?(url)
+      db.increment_click(urldata['key'])
+      redirect url
+    else
+      status 404
+    end
+  rescue
     status 404
   end
 end

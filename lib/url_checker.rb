@@ -10,6 +10,10 @@ class UrlChecker
     @uri = URI(@url)
   end
 
+  def valid?
+    !invalid?
+  end
+
   def invalid?
     [
       @uri.host.nil?,

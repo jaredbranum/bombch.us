@@ -13,7 +13,7 @@ class Bombchus
   
   def self.valid_url?(url)
     u = UrlChecker.new(url)
-    if u.invalid? || u.spam? || !u.resolves?
+    if u.invalid? # || u.spam? || !u.resolves?
       raise Bombchus::InvalidURLException
     end
     true
